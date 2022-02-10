@@ -24,7 +24,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	private JwtTokenStore tokenStore;
 	
 	private static final String[] VISITOR = { "/oauth/token", "/h2-console/**" };
-	private static final String[] MEMBER = {"/movies", "/users"};
+	private static final String[] MEMBER = {"/movies", "/reviews", "/users"};
 
 	
 	@Override
@@ -43,6 +43,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 		http.authorizeRequests()
 		.antMatchers(VISITOR).permitAll()
 		.antMatchers(HttpMethod.GET, MEMBER).permitAll()
+		.antMatchers(HttpMethod.POST, MEMBER).permitAll()		
 		.anyRequest().authenticated();
 	}	
 }
