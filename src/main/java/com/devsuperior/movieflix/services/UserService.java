@@ -23,12 +23,14 @@ public class UserService implements UserDetailsService {
 	
 	private static Logger logger = LoggerFactory.getLogger(UserService.class);
 	
-
+	
+	
 	@Autowired
 	private UserRepository repository;
 	
 	@Autowired
 	private AuthService authService;
+	
 	
 	@Transactional(readOnly = true)
 	public List<UserDTO> findAll(){

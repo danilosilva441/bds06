@@ -4,14 +4,20 @@ package com.devsuperior.movieflix.config;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableResourceServer
@@ -23,8 +29,9 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	@Autowired
 	private JwtTokenStore tokenStore;
 	
-	private static final String[] VISITOR = { "/oauth/token", "/h2-console/**" };
-	private static final String[] MEMBER = {"/movies", "/reviews", "/users"};
+	private static final String[] PUBLIC = { "/oauth/token", "/h2-console/**" };
+	
+	
 
 	
 	@Override
@@ -41,9 +48,33 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 		}
 		
 		http.authorizeRequests()
-		.antMatchers(VISITOR).permitAll()
-		.antMatchers(HttpMethod.GET, MEMBER).permitAll()
-		.antMatchers(HttpMethod.POST, MEMBER).permitAll()		
-		.anyRequest().authenticated();
+		.antMatchers(PUBLIC).permitAll().anyRequest().authenticated();
+		
+
+		
+		http.cors().configurationSource(corsConfigurationSource());
 	}	
+	
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration corsConfig = new CorsConfiguration();
+		//Futuramente pode colocar o dominio de preferencia(no lugar do *), que no caso vai dar permisão so pra ele.
+		corsConfig.setAllowedOriginPatterns(Arrays.asList("*")); 
+		corsConfig.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE", "PATCH")); //pode especificar os metodos que pode liberar
+		corsConfig.setAllowCredentials(true); //gerenciar credenciais com esse metodo
+		corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type")); //especifica qual cabeçario pode permitir
+		
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", corsConfig);
+		return source;
+	}
+	
+	@Bean
+	public FilterRegistrationBean<CorsFilter> corsFilter(){
+		FilterRegistrationBean<CorsFilter> bean
+			= new FilterRegistrationBean<>(new CorsFilter(corsConfigurationSource()));
+		bean.setOrder(Ordered.HIGHEST_PRECEDENCE); //Coloca essa função com a maxima precedencia.
+		return bean;
+	}
 }
+

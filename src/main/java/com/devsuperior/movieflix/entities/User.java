@@ -98,6 +98,10 @@ public class User implements UserDetails, Serializable {
 		return reviews;
 	}
 
+	public void setReviews(List<Review> reviews) {
+		this.reviews = reviews;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);

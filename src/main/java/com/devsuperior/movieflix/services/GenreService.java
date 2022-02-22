@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,9 +19,9 @@ public class GenreService {
 	private GenreRepository repository;
 	
 	@Transactional
-	public List<GenreDTO> findAll(){
-		List<Genre> list = repository.findAll();
-		return list.stream().map(x -> new GenreDTO(x)).collect(Collectors.toList());
+	public List<GenreDTO> findAll(Direction direction){
+		List<Genre> page = repository.findAll();
+		return page.stream().map(x -> new GenreDTO(x)).collect(Collectors.toList());
 	}
 	
 	
