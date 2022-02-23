@@ -28,10 +28,11 @@ public class MovieService {
 	private GenreRepository genreRepository;
 	
 	
+
 	@Transactional
 	public Page<MovieDTO> pageForCurrentUserGenre(Long genreId, String title, Pageable pageable){
 		List<Genre> genre = (genreId == 0) ? null : Arrays.asList(genreRepository.getOne(genreId));
-		Page<Movie> page = repository.findGenre(genre, title, pageable);
+		Page<Movie> page = repository.find(genre, title, pageable);
 		repository.findMoviesWithGenres(page.getContent());
 		return page.map(x -> new MovieDTO(x));
 	}
@@ -42,4 +43,11 @@ public class MovieService {
 		Movie entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
 		return new MovieDTO(entity);
 	}
+	
+//	@Transactional(readOnly = true)
+//	public MovieDTO findByIdReview(Long id, ReviewDTO review) {
+//		Optional<Movie> obj = repository.findAll(id, review);
+//		Movie entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
+//		return new MovieDTO(entity);
+//	}
 }
