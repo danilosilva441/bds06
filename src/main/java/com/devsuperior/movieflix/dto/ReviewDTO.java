@@ -2,7 +2,10 @@ package com.devsuperior.movieflix.dto;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Length;
 
 import com.devsuperior.movieflix.entities.Review;
 
@@ -12,9 +15,11 @@ public class ReviewDTO implements Serializable {
 	private Long id;
 	
 	@NotNull(message = "Campo requerido")
+	@Length(min= 3)
+	@NotBlank
 	private String text;
 	
-	private UserDTO userId;
+	private UserDTO user;
 	
 	@NotNull(message = "Campo requerido")
 	private Long movieId;
@@ -22,19 +27,19 @@ public class ReviewDTO implements Serializable {
 	public ReviewDTO() {
 	}
 
-	public ReviewDTO(Long id, @NotNull(message = "Campo requerido") String text, UserDTO userId,
+	public ReviewDTO(Long id, @NotNull(message = "Campo requerido") String text, UserDTO user,
 			@NotNull(message = "Campo requerido") Long movieId) {
 		super();
 		this.id = id;
 		this.text = text;
-		this.userId = userId;
+		this.user = user;
 		this.movieId = movieId;
 	}
 
 	public ReviewDTO(Review entity) {
 		id = entity.getId();
 		text = entity.getText();
-		userId = new UserDTO(entity.getUser());
+		user = new UserDTO(entity.getUser());
 		movieId = entity.getMovie().getId();
 	}
 	
@@ -55,12 +60,12 @@ public class ReviewDTO implements Serializable {
 		this.text = text;
 	}
 
-	public UserDTO getUserId() {
-		return userId;
+	public UserDTO getUser() {
+		return user;
 	}
 
-	public void setUserId(UserDTO userId) {
-		this.userId = userId;
+	public void setUser(UserDTO user) {
+		this.user = user;
 	}
 
 	public Long getMovieId() {
