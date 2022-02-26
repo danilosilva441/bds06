@@ -3,6 +3,8 @@ package com.devsuperior.movieflix.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +28,7 @@ public class MovieController {
 	public ResponseEntity<Page<MovieDTO>> findAllGenre(
 			@RequestParam(value = "genreId", defaultValue = "0") Long genreId,
 			@RequestParam(value = "title", defaultValue = "") String title,
+			@SortDefault.SortDefaults({@SortDefault(sort = "title", direction = Sort.Direction.ASC)})
 			Pageable pageable) {
 		Page<MovieDTO> page = service.pageForCurrentUserGenre(genreId, title.trim(), pageable);
 
